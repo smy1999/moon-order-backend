@@ -22,9 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -113,6 +111,23 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         employeeMapper.updateEmployee(employee);
 
+    }
+
+    @Override
+    public Employee findEmployeeById(Long id) {
+        Employee employee = employeeMapper.getById(id);
+        employee.setPassword("");
+        return employee;
+    }
+
+    @Override
+    public void editEmployee(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+
+        employeeMapper.updateEmployee(employee);
     }
 
 

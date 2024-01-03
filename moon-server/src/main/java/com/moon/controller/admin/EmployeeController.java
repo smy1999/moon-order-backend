@@ -12,7 +12,6 @@ import com.moon.service.EmployeeService;
 import com.moon.utils.JwtUtil;
 import com.moon.vo.EmployeeLoginVO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +30,35 @@ public class EmployeeController {
     private EmployeeService employeeService;
     @Autowired
     private JwtProperties jwtProperties;
+
+
+    /**
+     * 根据id查询员工
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Result<Employee> findEmployeeById(@PathVariable Long id) {
+        log.info("查询员工 id: {} ", id);
+        Employee employee = employeeService.findEmployeeById(id);
+        return Result.success(employee);
+    }
+
+    /**
+     * 编辑员工信息
+     * @param employeeDTO
+     * @return
+     */
+    @PutMapping
+    public Result<String> editEmployee(@RequestBody EmployeeDTO employeeDTO) {
+        log.info("修改员工: {}", employeeDTO);
+        employeeService.editEmployee(employeeDTO);
+
+        return Result.success();
+    }
+
+
+
 
 
     /**
@@ -84,7 +112,6 @@ public class EmployeeController {
 
     /**
      * 登录
-     *
      * @param employeeLoginDTO
      * @return
      */
@@ -114,7 +141,6 @@ public class EmployeeController {
 
     /**
      * 退出
-     *
      * @return
      */
     @PostMapping("/logout")

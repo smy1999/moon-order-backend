@@ -6,8 +6,6 @@ import com.moon.dto.EmployeePageQueryDTO;
 import com.moon.entity.Employee;
 import com.moon.result.PageResult;
 
-import java.util.Map;
-
 public interface EmployeeService {
 
     /**
@@ -38,4 +36,16 @@ public interface EmployeeService {
     void changeStatus(Long id, Integer status);
 
 
+    /**
+     * 根据id查询员工
+     * @param id
+     * @return
+     */
+    Employee findEmployeeById(Long id);
+
+    /**
+     * 修改员工信息
+     * @param employeeDTO
+     */
+    void editEmployee(EmployeeDTO employeeDTO);
 }
