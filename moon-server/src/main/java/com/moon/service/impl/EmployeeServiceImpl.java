@@ -1,16 +1,20 @@
 package com.moon.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.moon.constant.MessageConstant;
 import com.moon.constant.PasswordConstant;
 import com.moon.constant.StatusConstant;
 import com.moon.context.BaseContext;
 import com.moon.dto.EmployeeDTO;
 import com.moon.dto.EmployeeLoginDTO;
+import com.moon.dto.EmployeePageQueryDTO;
 import com.moon.entity.Employee;
 import com.moon.exception.AccountLockedException;
 import com.moon.exception.AccountNotFoundException;
 import com.moon.exception.PasswordErrorException;
 import com.moon.mapper.EmployeeMapper;
+import com.moon.result.PageResult;
 import com.moon.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -77,20 +84,22 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdateUser(empId);
 
         employeeMapper.addEmployee(employee);
+    }
 
-//        private Long id
-//        private String username;
-//        private String name;
-//        private String phone;
-//        private String sex;
-//        private String idNumber；
+    @Override
+    public PageResult getEmployeePage(EmployeePageQueryDTO employeePageQueryDTO) {
 
+        //TODO: 如果在第二页查询第一页中含有的结果,会无法显示,因为是查询第二页,但人数少于一页,第二页为空
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
 
-//        private Long id;
-//        private Long createUser;
-//        private Long updateUser;
+        List<Employee> employees = employeeMapper.getEmployeeByName(employeePageQueryDTO.getName());
+        PageInfo<Employee> pageInfo = new PageInfo<>(employees);
 
+        PageResult data = new PageResult();
+        data.setTotal(pageInfo.getTotal());
+        data.setRecords(pageInfo.getList());
 
+        return data;
     }
 
 }

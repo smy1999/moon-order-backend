@@ -3,7 +3,10 @@ package com.moon.mapper;
 import com.moon.entity.Employee;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 @Mapper
 public interface EmployeeMapper {
@@ -22,10 +25,6 @@ public interface EmployeeMapper {
      *
      * @param employee
      */
-//    @Insert("""
-//        INSERT INTO employee VALUES(DEFAULT, #{name}, #{username}, #{password}, #{phone}, #{sex},
-//        #{idNumber}, #{status}, NOW(), NOW(), #{createUser}, #{updateUser})
-//""")
     @Insert("""
             INSERT INTO employee
             (name, username, password, phone, sex, id_number, status, create_time, update_time, create_user, update_user)
@@ -33,5 +32,15 @@ public interface EmployeeMapper {
             """)
     void addEmployee(Employee employee);
 
+
+    /**
+     * 根据name查询用户
+     * @param name
+     * @return
+     */
+//    @Select("""
+//            SELECT * FROM employee WHERE name LIKE '%${name}%'
+//            """)
+    List<Employee> getEmployeeByName(@Param("name") String name);
 
 }

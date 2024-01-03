@@ -3,18 +3,18 @@ package com.moon.controller.admin;
 import com.moon.constant.JwtClaimsConstant;
 import com.moon.dto.EmployeeDTO;
 import com.moon.dto.EmployeeLoginDTO;
+import com.moon.dto.EmployeePageQueryDTO;
 import com.moon.entity.Employee;
 import com.moon.properties.JwtProperties;
+import com.moon.result.PageResult;
 import com.moon.result.Result;
 import com.moon.service.EmployeeService;
 import com.moon.utils.JwtUtil;
 import com.moon.vo.EmployeeLoginVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +31,21 @@ public class EmployeeController {
     private EmployeeService employeeService;
     @Autowired
     private JwtProperties jwtProperties;
+
+
+    /**
+     * 分页查询员工数据
+     * @param employeePageQueryDTO
+     * @return
+     */
+    @GetMapping("/page")
+    public Result<PageResult> getEmployeePage(EmployeePageQueryDTO employeePageQueryDTO) {
+        log.info("员工分页查询: {}", employeePageQueryDTO);
+
+        PageResult pageResult = employeeService.getEmployeePage(employeePageQueryDTO);
+
+        return Result.success(pageResult);
+    }
 
 
     /**
