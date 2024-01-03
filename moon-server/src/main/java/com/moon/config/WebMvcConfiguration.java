@@ -44,9 +44,9 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     @Bean
     public Docket docket() {
         ApiInfo apiInfo = new ApiInfoBuilder()
-                .title("苍穹外卖项目接口文档")
+                .title("Moon Order Interface Document")
                 .version("2.0")
-                .description("苍穹外卖项目接口文档")
+                .description("Moon Order Interface Document")
                 .build();
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo)
