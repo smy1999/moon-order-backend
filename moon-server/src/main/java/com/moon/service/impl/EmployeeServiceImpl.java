@@ -1,7 +1,10 @@
 package com.moon.service.impl;
 
 import com.moon.constant.MessageConstant;
+import com.moon.constant.PasswordConstant;
 import com.moon.constant.StatusConstant;
+import com.moon.context.BaseContext;
+import com.moon.dto.EmployeeDTO;
 import com.moon.dto.EmployeeLoginDTO;
 import com.moon.entity.Employee;
 import com.moon.exception.AccountLockedException;
@@ -9,9 +12,12 @@ import com.moon.exception.AccountNotFoundException;
 import com.moon.exception.PasswordErrorException;
 import com.moon.mapper.EmployeeMapper;
 import com.moon.service.EmployeeService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import java.time.LocalDateTime;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -52,6 +58,39 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         //3、返回实体对象
         return employee;
+    }
+
+    @Override
+    public void addEmployee(EmployeeDTO employeeDTO) {
+
+        Employee employee = new Employee();
+
+        BeanUtils.copyProperties(employeeDTO, employee);
+
+        employee.setStatus(StatusConstant.ENABLE);
+        employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+
+        Long empId = BaseContext.getCurrentId();
+        employee.setCreateUser(empId);
+        employee.setUpdateUser(empId);
+
+        employeeMapper.addEmployee(employee);
+
+//        private Long id
+//        private String username;
+//        private String name;
+//        private String phone;
+//        private String sex;
+//        private String idNumber；
+
+
+//        private Long id;
+//        private Long createUser;
+//        private Long updateUser;
+
+
     }
 
 }

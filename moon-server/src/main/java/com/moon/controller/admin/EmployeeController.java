@@ -1,6 +1,7 @@
 package com.moon.controller.admin;
 
 import com.moon.constant.JwtClaimsConstant;
+import com.moon.dto.EmployeeDTO;
 import com.moon.dto.EmployeeLoginDTO;
 import com.moon.entity.Employee;
 import com.moon.properties.JwtProperties;
@@ -30,6 +31,21 @@ public class EmployeeController {
     private EmployeeService employeeService;
     @Autowired
     private JwtProperties jwtProperties;
+
+
+    /**
+     * 添加用户
+     * @param employeeDTO
+     * @return
+     */
+    @PostMapping
+    public Result<String> addEmployee(@RequestBody EmployeeDTO employeeDTO) {
+        log.info("添加员工: {}", employeeDTO);
+        employeeService.addEmployee(employeeDTO);
+
+        return Result.success();
+    }
+
 
     /**
      * 登录
