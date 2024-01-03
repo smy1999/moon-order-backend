@@ -102,4 +102,18 @@ public class EmployeeServiceImpl implements EmployeeService {
         return data;
     }
 
+    @Override
+    public void changeStatus(Long id, Integer status) {
+        Employee employee = Employee.builder()
+                .id(id)
+                .status(status)
+                .updateTime(LocalDateTime.now())
+                .updateUser(BaseContext.getCurrentId())
+                .build();
+
+        employeeMapper.updateEmployee(employee);
+
+    }
+
+
 }

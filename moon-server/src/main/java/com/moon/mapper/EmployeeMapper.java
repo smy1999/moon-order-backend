@@ -1,10 +1,7 @@
 package com.moon.mapper;
 
 import com.moon.entity.Employee;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -43,4 +40,9 @@ public interface EmployeeMapper {
 //            """)
     List<Employee> getEmployeeByName(@Param("name") String name);
 
+    /**
+     * 根据id动态修改SQL
+     * @param employee
+     */
+    void updateEmployee(Employee employee);
 }

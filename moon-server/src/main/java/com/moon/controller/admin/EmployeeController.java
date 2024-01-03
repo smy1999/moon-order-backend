@@ -34,6 +34,26 @@ public class EmployeeController {
 
 
     /**
+     * 修改用户状态
+     *
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public Result<String> changeStatus(
+            @RequestParam Long id,
+            @PathVariable Integer status
+
+    ) {
+        log.info("修改员工 {} 状态 {}", id, status);
+
+        employeeService.changeStatus(id, status);
+
+        return Result.success();
+    }
+
+
+    /**
      * 分页查询员工数据
      * @param employeePageQueryDTO
      * @return
