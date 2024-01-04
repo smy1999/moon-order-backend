@@ -64,8 +64,6 @@ public class CategoryController {
         return Result.success();
     }
 
-
-
     /**
      * 分页分类查询
      * @param categoryPageQueryDTO
@@ -88,5 +86,16 @@ public class CategoryController {
         log.info("增加分类: {}", categoryDTO);
         categoryService.addCategory(categoryDTO);
         return Result.success();
+    }
+
+    /**
+     * 根据类型查询分类
+     * @param type
+     * @return
+     */
+    @GetMapping("/list")
+    public Result<List<Category>> list(Integer type){
+        List<Category> list = categoryService.findByType(type);
+        return Result.success(list);
     }
 }
