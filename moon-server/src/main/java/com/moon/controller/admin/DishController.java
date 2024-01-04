@@ -7,6 +7,7 @@ import com.moon.dto.DishPageQueryDTO;
 import com.moon.result.PageResult;
 import com.moon.result.Result;
 import com.moon.service.DishService;
+import com.moon.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,30 @@ public class DishController {
     @Autowired
     private DishService dishService;
 
+    /**
+     * 修改菜品
+     * @param dishDTO
+     * @return
+     */
+    @PutMapping
+    public Result<String> update(@RequestBody DishDTO dishDTO) {
+        log.info("修改菜品: {}", dishDTO);
+        dishService.updateDish(dishDTO);
+        return Result.success();
+    }
+
+    /**
+     * 根据id查询菜品
+     * @param id
+     * @return
+     */
+    @RequestMapping("/{id}")
+    public Result<DishVO> findById(@PathVariable Long id) {
+        log.info("查找菜品 : {}", id);
+        DishVO dishVO = dishService.findById(id);
+        return Result.success(dishVO);
+    }
+
 
     /**
      * 批量删除
@@ -32,7 +57,6 @@ public class DishController {
     public Result<String> deleteBatch(@RequestParam List<Long> ids) {
         log.info("批量删除: {}", ids);
         dishService.deleteBatch(ids);
-
         return Result.success();
     }
 

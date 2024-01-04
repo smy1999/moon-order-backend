@@ -3,6 +3,7 @@ package com.moon.service;
 import com.moon.dto.DishDTO;
 import com.moon.dto.DishPageQueryDTO;
 import com.moon.result.PageResult;
+import com.moon.vo.DishVO;
 
 import java.util.List;
 
@@ -26,4 +27,17 @@ public interface DishService {
      * @param ids
      */
     void deleteBatch(List<Long> ids);
+
+    /**
+     * 根据id查询菜品
+     * @param id
+     * @return
+     */
+    DishVO findById(Long id);
+
+    /**
+     * 修改菜品
+     * @param dishDTO
+     */
+    void updateDish(DishDTO dishDTO);
 }

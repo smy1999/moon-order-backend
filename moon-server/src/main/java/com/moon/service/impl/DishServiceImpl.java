@@ -9,6 +9,7 @@ import com.moon.dto.DishPageQueryDTO;
 import com.moon.entity.Dish;
 import com.moon.entity.DishFlavor;
 import com.moon.exception.DeletionNotAllowedException;
+import com.moon.mapper.CategoryMapper;
 import com.moon.mapper.DishFlavorMapper;
 import com.moon.mapper.DishMapper;
 import com.moon.mapper.SetmealDishMapper;
@@ -17,9 +18,11 @@ import com.moon.service.DishService;
 import com.moon.vo.DishVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,7 +36,6 @@ public class DishServiceImpl implements DishService {
 
     @Autowired
     private SetmealDishMapper setmealDishMapper;
-
 
     @Override
     @Transactional
@@ -83,6 +85,42 @@ public class DishServiceImpl implements DishService {
         dishMapper.deleteBatch(ids);
 
         dishFlavorMapper.deleteBatch(ids);
+
+    }
+
+    @Override
+    @Transactional
+    public DishVO findById(Long id) {
+        DishVO dishVO = new DishVO();
+
+        Dish dish = dishMapper.findById(id);
+        BeanUtils.copyProperties(dish, dishVO);
+
+        List<DishFlavor> flavors = dishFlavorMapper.findById(id);
+        dishVO.setFlavors(flavors);
+
+        return dishVO;
+    }
+
+    @Override
+    @Transactional
+    public void updateDish(DishDTO dishDTO) {
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO, dish);
+
+        dishMapper.updateDish(dish);
+
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        Long dishId = dish.getId();
+        List<Long> dishIds = new ArrayList<>();
+        dishIds.add(dishId);
+
+        dishFlavorMapper.deleteBatch(dishIds);
+
+        if (flavors != null && !flavors.isEmpty()) {
+            flavors.forEach(flavor -> flavor.setDishId(dishId));
+            dishFlavorMapper.addBatchFlavor(flavors);
+        }
 
     }
 }

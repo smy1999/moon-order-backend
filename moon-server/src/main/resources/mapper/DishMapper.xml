@@ -12,6 +12,22 @@
         (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
     </insert>
 
+
+    <update id="updateDish">
+        UPDATE dish
+        SET
+            <if test="description != null">description = #{description},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="image != null">image = #{image},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser}</if>
+        WHERE id = #{id}
+    </update>
+
+
     <delete id="deleteBatch">
         DELETE FROM dish
         WHERE id in

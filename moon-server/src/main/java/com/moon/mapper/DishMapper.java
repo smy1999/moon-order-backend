@@ -1,6 +1,7 @@
 package com.moon.mapper;
 
 import com.moon.annotation.AutoFill;
+import com.moon.dto.DishDTO;
 import com.moon.dto.DishPageQueryDTO;
 import com.moon.entity.Dish;
 import com.moon.enumeration.OperationType;
@@ -9,6 +10,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -50,4 +52,20 @@ public interface DishMapper {
      * @param ids
      */
     void deleteBatch(List<Long> ids);
+
+    /**
+     * 根据id查询
+     * @param id
+     * @return
+     */
+    @Select("SELECT * FROM dish WHERE id = #{id}")
+    Dish findById(Long id);
+
+    /**
+     * 更新dish
+     * @param dish
+     */
+    @AutoFill(OperationType.UPDATE)
+    void updateDish(Dish dish);
+
 }

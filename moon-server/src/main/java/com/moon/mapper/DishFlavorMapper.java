@@ -4,6 +4,7 @@ package com.moon.mapper;
 import com.moon.entity.DishFlavor;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -20,4 +21,14 @@ public interface DishFlavorMapper {
      * @param dishIds
      */
     void deleteBatch(List<Long> dishIds);
+
+    /**
+     * 根据dish ID 查询flavor
+     * @param dishId
+     * @return
+     */
+    @Select("SELECT * FROM dish_flavor WHERE dish_id = #{dishId}")
+    List<DishFlavor> findById(Long dishId);
+
+
 }
