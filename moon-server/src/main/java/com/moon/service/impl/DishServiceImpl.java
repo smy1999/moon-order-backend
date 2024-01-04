@@ -1,6 +1,5 @@
 package com.moon.service.impl;
 
-import com.moon.constant.StatusConstant;
 import com.moon.dto.DishDTO;
 import com.moon.entity.Dish;
 import com.moon.entity.DishFlavor;
@@ -29,14 +28,17 @@ public class DishServiceImpl implements DishService {
     public void addDish(DishDTO dishDTO) {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO, dish);
-        dish.setStatus(StatusConstant.DISABLE);
 
         dishMapper.addDish(dish);
         Long dishId = dish.getId();
         List<DishFlavor> flavors = dishDTO.getFlavors();
 
-        dishFlavorMapper.addBatchFlavor(flavors, dishId);
-
+        if (flavors != null && !flavors.isEmpty()) {
+            flavors.forEach(
+                    flavor -> flavor.setDishId(dishId)
+            );
+            dishFlavorMapper.addBatchFlavor(flavors);
+        }
 
     }
 }
