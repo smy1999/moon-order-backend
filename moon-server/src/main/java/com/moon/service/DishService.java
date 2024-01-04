@@ -2,6 +2,7 @@ package com.moon.service;
 
 import com.moon.dto.DishDTO;
 import com.moon.dto.DishPageQueryDTO;
+import com.moon.entity.Dish;
 import com.moon.result.PageResult;
 import com.moon.vo.DishVO;
 
@@ -40,4 +41,18 @@ public interface DishService {
      * @param dishDTO
      */
     void updateDish(DishDTO dishDTO);
+
+    /**
+     * 修改状态
+     * @param id
+     * @param status
+     */
+    void changeStatus(Long id, Integer status);
+
+    /**
+     * 根据分类id查询菜品
+     * @param categoryId
+     * @return
+     */
+    List<Dish> findByCategoryId(Integer categoryId);
 }

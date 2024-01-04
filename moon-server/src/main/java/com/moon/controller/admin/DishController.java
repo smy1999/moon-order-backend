@@ -4,6 +4,7 @@ package com.moon.controller.admin;
 import com.moon.dto.CategoryPageQueryDTO;
 import com.moon.dto.DishDTO;
 import com.moon.dto.DishPageQueryDTO;
+import com.moon.entity.Dish;
 import com.moon.result.PageResult;
 import com.moon.result.Result;
 import com.moon.service.DishService;
@@ -23,6 +24,27 @@ public class DishController {
     @Autowired
     private DishService dishService;
 
+    @GetMapping("/list")
+    public Result<List<Dish>> findByCategoryId(@RequestParam Integer categoryId) {
+        log.info("根据分类id查找 {}", categoryId);
+        List<Dish> data = dishService.findByCategoryId(categoryId);
+        return Result.success(data);
+    }
+
+
+    /**
+     * 修改状态
+     * @param status
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public Result<String> changeStatus(@RequestParam Long id, @PathVariable Integer status) {
+        log.info("修改状态: {}", status);
+        dishService.changeStatus(id, status);
+        return Result.success();
+    }
+
+
     /**
      * 修改菜品
      * @param dishDTO
@@ -40,7 +62,7 @@ public class DishController {
      * @param id
      * @return
      */
-    @RequestMapping("/{id}")
+    @GetMapping("/{id}")
     public Result<DishVO> findById(@PathVariable Long id) {
         log.info("查找菜品 : {}", id);
         DishVO dishVO = dishService.findById(id);

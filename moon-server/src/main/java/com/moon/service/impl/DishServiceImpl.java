@@ -9,7 +9,6 @@ import com.moon.dto.DishPageQueryDTO;
 import com.moon.entity.Dish;
 import com.moon.entity.DishFlavor;
 import com.moon.exception.DeletionNotAllowedException;
-import com.moon.mapper.CategoryMapper;
 import com.moon.mapper.DishFlavorMapper;
 import com.moon.mapper.DishMapper;
 import com.moon.mapper.SetmealDishMapper;
@@ -18,7 +17,6 @@ import com.moon.service.DishService;
 import com.moon.vo.DishVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,5 +120,19 @@ public class DishServiceImpl implements DishService {
             dishFlavorMapper.addBatchFlavor(flavors);
         }
 
+    }
+
+    @Override
+    public void changeStatus(Long id, Integer status) {
+        Dish dish = Dish.builder()
+                .status(status)
+                .id(id)
+                .build();
+        dishMapper.updateDish(dish);
+    }
+
+    @Override
+    public List<Dish> findByCategoryId(Integer categoryId) {
+        return dishMapper.findByCategoryId(categoryId);
     }
 }
