@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/admin/dish")
@@ -18,6 +21,20 @@ public class DishController {
 
     @Autowired
     private DishService dishService;
+
+
+    /**
+     * 批量删除
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    public Result<String> deleteBatch(@RequestParam List<Long> ids) {
+        log.info("批量删除: {}", ids);
+        dishService.deleteBatch(ids);
+
+        return Result.success();
+    }
 
 
     /**

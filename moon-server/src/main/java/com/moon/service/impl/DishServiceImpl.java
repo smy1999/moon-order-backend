@@ -2,12 +2,16 @@ package com.moon.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.moon.constant.MessageConstant;
+import com.moon.constant.StatusConstant;
 import com.moon.dto.DishDTO;
 import com.moon.dto.DishPageQueryDTO;
 import com.moon.entity.Dish;
 import com.moon.entity.DishFlavor;
+import com.moon.exception.DeletionNotAllowedException;
 import com.moon.mapper.DishFlavorMapper;
 import com.moon.mapper.DishMapper;
+import com.moon.mapper.SetmealDishMapper;
 import com.moon.result.PageResult;
 import com.moon.service.DishService;
 import com.moon.vo.DishVO;
@@ -26,6 +30,9 @@ public class DishServiceImpl implements DishService {
 
     @Autowired
     private DishMapper dishMapper;
+
+    @Autowired
+    private SetmealDishMapper setmealDishMapper;
 
 
     @Override
@@ -55,5 +62,27 @@ public class DishServiceImpl implements DishService {
         PageInfo<DishVO> pageInfo = new PageInfo<>(dishes);
 
         return new PageResult(pageInfo.getTotal(), pageInfo.getList());
+    }
+
+    @Override
+    @Transactional
+    public void deleteBatch(List<Long> ids) {
+
+        // 判断是否存在启售中
+        List<Integer> statuses = dishMapper.getStatuses(ids);
+        if (statuses.contains(StatusConstant.ENABLE)) {
+            throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
+        }
+
+        // 判断是否关联了套餐
+        List<Integer> setmealIds = setmealDishMapper.getSetmealIdsByDishIds(ids);
+        if (setmealIds != null && !setmealIds.isEmpty()) {
+            throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
+        }
+
+        dishMapper.deleteBatch(ids);
+
+        dishFlavorMapper.deleteBatch(ids);
+
     }
 }

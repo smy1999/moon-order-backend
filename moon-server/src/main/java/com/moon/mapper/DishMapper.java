@@ -7,6 +7,7 @@ import com.moon.enumeration.OperationType;
 import com.moon.vo.DishVO;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -36,4 +37,17 @@ public interface DishMapper {
      * @return
      */
     List<DishVO> findPage(DishPageQueryDTO dishPageQueryDTO);
+
+    /**
+     * 查询菜品售卖状态集合
+     * @param ids
+     * @return
+     */
+    List<Integer> getStatuses(List<Long> ids);
+
+    /**
+     * 批量删除菜品
+     * @param ids
+     */
+    void deleteBatch(List<Long> ids);
 }

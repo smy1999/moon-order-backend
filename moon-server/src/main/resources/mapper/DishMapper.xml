@@ -11,6 +11,16 @@
         VALUES
         (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
     </insert>
+
+    <delete id="deleteBatch">
+        DELETE FROM dish
+        WHERE id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
     <select id="findPage" resultType="com.moon.vo.DishVO">
         SELECT
         dish.*,
@@ -29,6 +39,12 @@
             </if>
         </where>
         ORDER BY dish.update_time DESC
+    </select>
+    <select id="getStatuses" resultType="java.lang.Integer">
+        SELECT status FROM dish WHERE id IN
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
     </select>
 
 </mapper>
