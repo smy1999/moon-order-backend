@@ -1,6 +1,8 @@
 package com.moon.mapper;
 
+import com.moon.annotation.AutoFill;
 import com.moon.entity.Employee;
+import com.moon.enumeration.OperationType;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -22,6 +24,7 @@ public interface EmployeeMapper {
      *
      * @param employee
      */
+    @AutoFill(OperationType.INSERT)
     @Insert("""
             INSERT INTO employee
             (name, username, password, phone, sex, id_number, status, create_time, update_time, create_user, update_user)
@@ -44,6 +47,7 @@ public interface EmployeeMapper {
      * 根据id动态修改SQL
      * @param employee
      */
+    @AutoFill(OperationType.UPDATE)
     void updateEmployee(Employee employee);
 
     /**
