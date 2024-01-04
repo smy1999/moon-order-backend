@@ -69,10 +69,22 @@ public interface DishMapper {
     void updateDish(Dish dish);
 
     /**
-     * 根据分类id查询
-     * @param categoryId
+     * 根据条件查询
+     * @param dish
      * @return
      */
-    @Select("SELECT * FROM dish WHERE category_id = #{categoryId}")
-    List<Dish> findByCategoryId(Integer categoryId);
+    List<Dish> findList(Dish dish);
+
+    /**
+     * 根据id查询是否
+     * @param id
+     * @return
+     */
+    @Select("""
+            SELECT dish.*
+            FROM dish
+                     LEFT JOIN setmeal_dish ON dish.id = setmeal_dish.dish_id
+            WHERE setmeal_id = 43
+            """)
+    List<Dish> findBySetmealId(Long id);
 }

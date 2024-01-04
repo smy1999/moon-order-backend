@@ -3,6 +3,20 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.moon.mapper.SetmealDishMapper">
+    <insert id="addBatch">
+        INSERT INTO setmeal_dish (setmeal_id, dish_id, name, price, copies) VALUES
+        <foreach collection="dishes" item="dish" separator=",">
+            (#{dish.setmealId}, #{dish.dishId}, #{dish.name}, #{dish.price}, #{dish.copies})
+        </foreach>
+
+    </insert>
+
+    <delete id="deleteBatchBySetmealId">
+        DELETE FROM setmeal_dish WHERE setmeal_id IN
+        <foreach collection="setmealIds" item="setmealId" separator="," open="(" close=")">
+            #{setmealId}
+        </foreach>
+    </delete>
 
     <select id="countByDish" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM setmeal_dish WHERE dish_id IN
@@ -10,11 +24,11 @@
             #{id}
         </foreach>
     </select>
-
     <select id="getSetmealIdsByDishIds" resultType="java.lang.Integer">
         SELECT setmeal_id FROM setmeal_dish WHERE dish_id IN
         <foreach collection="dishIds" item="dishId" separator="," open="(" close=")">
             #{dishId}
         </foreach>
     </select>
+
 </mapper>

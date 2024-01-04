@@ -1,7 +1,6 @@
 package com.moon.controller.admin;
 
 
-import com.moon.dto.CategoryPageQueryDTO;
 import com.moon.dto.DishDTO;
 import com.moon.dto.DishPageQueryDTO;
 import com.moon.entity.Dish;
@@ -13,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +23,7 @@ public class DishController {
     private DishService dishService;
 
     @GetMapping("/list")
-    public Result<List<Dish>> findByCategoryId(@RequestParam Integer categoryId) {
+    public Result<List<Dish>> findByCategoryId(@RequestParam Long categoryId) {
         log.info("根据分类id查找 {}", categoryId);
         List<Dish> data = dishService.findByCategoryId(categoryId);
         return Result.success(data);
@@ -104,8 +102,6 @@ public class DishController {
     public Result<String> addDish(@RequestBody DishDTO dishDTO) {
         log.info("新增菜品: {}", dishDTO);
         dishService.addDish(dishDTO);
-
-
         return Result.success();
     }
 

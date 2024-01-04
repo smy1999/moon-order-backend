@@ -87,7 +87,6 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    @Transactional
     public DishVO findById(Long id) {
         DishVO dishVO = new DishVO();
 
@@ -132,7 +131,12 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public List<Dish> findByCategoryId(Integer categoryId) {
-        return dishMapper.findByCategoryId(categoryId);
+    public List<Dish> findByCategoryId(Long categoryId) {
+        Dish dish = Dish.builder()
+                .categoryId(categoryId)
+                .status(StatusConstant.ENABLE)
+                .build();
+
+        return dishMapper.findList(dish);
     }
 }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moon.mapper.SetmealMapper">
+
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO setmeal (category_id, name, price, description, image, status, create_time, update_time, create_user, update_user)
+        VALUES (#{categoryId}, #{name}, #{price}, #{description}, #{image}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
+    </insert>
+
+
+    <update id="update">
+        UPDATE setmeal
+        <set>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="image != null">image = #{image},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteBatch">
+        DELETE FROM setmeal WHERE id IN
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <select id="findAllWithCategoryName" resultType="com.moon.vo.SetmealVO">
+        SELECT s.*, c.name categoryName
+        FROM setmeal s
+        LEFT JOIN category c ON s.category_id = c.id
+        <where>
+            <if test="name != null">
+                AND s.name LIKE '%${name}%'
+            </if>
+            <if test="status != null">
+                AND s.status = #{status}
+            </if>
+            <if test="categoryId != null">
+                AND s.category_id = #{categoryId}
+            </if>
+        </where>
+        ORDER BY update_time DESC
+    </select>
+
+    <select id="getStatusesByIds" resultType="java.lang.Integer">
+        SELECT status FROM setmeal WHERE id IN
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
+
+</mapper>

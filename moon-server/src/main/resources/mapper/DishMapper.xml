@@ -62,5 +62,20 @@
             #{id}
         </foreach>
     </select>
+    <select id="findList" resultType="com.moon.entity.Dish">
+        SELECT * FROM dish
+        <where>
+            <if test="name != null">
+                AND name LIKE '%${name}%'
+            </if>
+            <if test="categoryId != null">
+                AND category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY update_time DESC
+    </select>
 
 </mapper>
