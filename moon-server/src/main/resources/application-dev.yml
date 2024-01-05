@@ -11,3 +11,8 @@ moon:
     access-key-id: LTAI5t9sif3Xvh4rTTVZP2LY
     access-key-secret: ttP89i2qHR4QO4TEanUKehQ56RJ8w4
     bucket-name: moon-order
+  redis:
+    host: localhost
+    port: 6379
+#    password: xxxx
+#    database: 0

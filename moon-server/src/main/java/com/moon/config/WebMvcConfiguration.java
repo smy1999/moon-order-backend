@@ -47,16 +47,34 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
      * @return
      */
     @Bean
-    public Docket docket() {
+    public Docket docketUser() {
         ApiInfo apiInfo = new ApiInfoBuilder()
                 .title("Moon Order Interface Document")
                 .version("2.0")
                 .description("Moon Order Interface Document")
                 .build();
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
+                .groupName("User Interfaces")
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.moon.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.moon.controller.user"))
+                .paths(PathSelectors.any())
+                .build();
+        return docket;
+    }
+
+    @Bean
+    public Docket docketAdmin() {
+        ApiInfo apiInfo = new ApiInfoBuilder()
+                .title("Moon Order Interface Document")
+                .version("2.0")
+                .description("Moon Order Interface Document")
+                .build();
+        Docket docket = new Docket(DocumentationType.SWAGGER_2)
+                .groupName("Admin Interfaces")
+                .apiInfo(apiInfo)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.moon.controller.admin"))
                 .paths(PathSelectors.any())
                 .build();
         return docket;

@@ -12,6 +12,9 @@ spring:
       url: jdbc:mysql://${moon.datasource.host}:${moon.datasource.port}/${moon.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: ${moon.datasource.username}
       password: ${moon.datasource.password}
+  redis:
+    host: ${moon.redis.host}
+    port: ${moon.redis.port}
 
 mybatis:
   #mapper配置文件
