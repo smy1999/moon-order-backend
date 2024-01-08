@@ -133,14 +133,7 @@ public class SetmealServiceImpl implements SetmealService {
 
     @Override
     public List<Setmeal> findList(Long categoryId) {
-        String key = "dish_" + categoryId;
-        List<Setmeal> setmeals = (List<Setmeal>) redisTemplate.opsForValue().get(key);
-        if (setmeals != null) {
-            return setmeals;
-        }
-        setmeals = setmealMapper.findByCategoryId(categoryId);
-        redisTemplate.opsForValue().set(key, setmeals);
-
+        List<Setmeal> setmeals = setmealMapper.findByCategoryId(categoryId);
         return setmeals;
 
     }

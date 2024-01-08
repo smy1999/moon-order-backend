@@ -9,6 +9,7 @@ import com.moon.vo.DishItemVO;
 import com.moon.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/list")
+    @Cacheable(cacheNames="setmealCache", key="#categoryId")
     public Result<List<Setmeal>> list(@RequestParam Long categoryId) {
         log.info("获取分类 {} 的套餐列表", categoryId);
         List<Setmeal> setmeals = setmealService.findList(categoryId);

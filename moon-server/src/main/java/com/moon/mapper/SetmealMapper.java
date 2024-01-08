@@ -70,7 +70,7 @@ public interface SetmealMapper {
      * @return
      */
     @Select("""
-            SELECT * FROM setmeal WHERE category_id = #{categoryId}
+            SELECT * FROM setmeal WHERE category_id = #{categoryId} AND status = 1
             """)
     List<Setmeal> findByCategoryId(Long categoryId);
 }
