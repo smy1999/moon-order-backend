@@ -20,6 +20,8 @@ import com.moon.vo.DishItemVO;
 import com.moon.vo.SetmealVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,9 @@ public class SetmealServiceImpl implements SetmealService {
 
     @Autowired
     private DishMapper dishMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     @Transactional
@@ -128,7 +133,15 @@ public class SetmealServiceImpl implements SetmealService {
 
     @Override
     public List<Setmeal> findList(Long categoryId) {
-        return setmealMapper.findByCategoryId(categoryId);
+        String key = "dish_" + categoryId;
+        List<Setmeal> setmeals = (List<Setmeal>) redisTemplate.opsForValue().get(key);
+        if (setmeals != null) {
+            return setmeals;
+        }
+        setmeals = setmealMapper.findByCategoryId(categoryId);
+        redisTemplate.opsForValue().set(key, setmeals);
+
+        return setmeals;
 
     }
 

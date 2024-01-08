@@ -15,8 +15,11 @@ import com.moon.mapper.SetmealDishMapper;
 import com.moon.result.PageResult;
 import com.moon.service.DishService;
 import com.moon.vo.DishVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class DishServiceImpl implements DishService {
 
     @Autowired
@@ -34,6 +38,9 @@ public class DishServiceImpl implements DishService {
 
     @Autowired
     private SetmealDishMapper setmealDishMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     @Transactional
@@ -142,10 +149,19 @@ public class DishServiceImpl implements DishService {
 
     @Override
     public List<DishVO> findDishVOByCategoryId(Long categoryId) {
-        List<DishVO> dishes = dishMapper.getDishVOByCategoryId(categoryId);
+        String key = "dish_" + categoryId;
+
+        List<DishVO> dishes = (List<DishVO>) redisTemplate.opsForValue().get(key);
+        if (dishes != null && !dishes.isEmpty()) {
+            log.info("从Redis中加载 {}", categoryId);
+            return dishes;
+        }
+
+        dishes = dishMapper.getDishVOByCategoryId(categoryId);
         dishes.forEach(
                 dish -> dish.setFlavors(dishFlavorMapper.findById(dish.getId()))
         );
+        redisTemplate.opsForValue().set(key, dishes);
         return dishes;
     }
 }
