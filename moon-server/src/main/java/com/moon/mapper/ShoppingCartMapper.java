@@ -3,6 +3,7 @@ package com.moon.mapper;
 
 import com.moon.dto.ShoppingCartDTO;
 import com.moon.entity.ShoppingCart;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
@@ -36,4 +37,18 @@ public interface ShoppingCartMapper {
      * @return
      */
     List<ShoppingCart> find(ShoppingCart shoppingCart);
+
+    /**
+     * 根据id删除
+     * @param id
+     */
+    @Delete("DELETE FROM shopping_cart WHERE id = #{id}")
+    void deleteById(Long id);
+
+    /**
+     * 根据 User Id 删除(清空购物车)
+     * @param userId
+     */
+    @Delete("DELETE FROM shopping_cart WHERE user_id = #{userId}")
+    void deleteByUserId(Long userId);
 }
