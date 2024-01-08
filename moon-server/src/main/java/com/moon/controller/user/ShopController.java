@@ -21,7 +21,8 @@ public class ShopController {
      */
     @GetMapping("/status")
     public Result<Integer> getStatus() {
-        Integer status = shopService.getStatus();
+//        Integer status = shopService.getStatus();
+        Integer status = 1;
         log.info("用户端获取状态 : {}", status == 1 ? "营业中" : "打烊中");
         return Result.success(status);
     }

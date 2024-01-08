@@ -14,5 +14,8 @@ moon:
   redis:
     host: localhost
     port: 6379
-#    password: xxxx
-#    database: 0
+    #    password: xxxx
+    #    database: 0
+  wechat:
+    appid: wxc18fc1e91378fef9
+    secret: c469f64c80dd4c0242adf81e4cdb9ba0
