@@ -62,7 +62,7 @@
             #{id}
         </foreach>
     </select>
-    <select id="findList" resultType="com.moon.entity.Dish">
+    <select id="findDishList" resultType="com.moon.entity.Dish">
         SELECT * FROM dish
         <where>
             <if test="name != null">
@@ -76,6 +76,12 @@
             </if>
         </where>
         ORDER BY update_time DESC
+    </select>
+    <select id="getDishVOByCategoryId" resultType="com.moon.vo.DishVO">
+        SELECT dish.*, category.name categoryName
+        FROM dish LEFT JOIN category ON dish.category_id = category.id
+        WHERE dish.category_id = #{categoryId}
+        AND dish.status = 1
     </select>
 
 </mapper>

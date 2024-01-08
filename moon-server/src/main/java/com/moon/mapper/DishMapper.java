@@ -1,16 +1,12 @@
 package com.moon.mapper;
 
 import com.moon.annotation.AutoFill;
-import com.moon.dto.DishDTO;
 import com.moon.dto.DishPageQueryDTO;
 import com.moon.entity.Dish;
 import com.moon.enumeration.OperationType;
 import com.moon.vo.DishVO;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -73,18 +69,25 @@ public interface DishMapper {
      * @param dish
      * @return
      */
-    List<Dish> findList(Dish dish);
+    List<Dish> findDishList(Dish dish);
 
     /**
      * 根据id查询是否
-     * @param id
+     * @param setmealId
      * @return
      */
     @Select("""
             SELECT dish.*
             FROM dish
                      LEFT JOIN setmeal_dish ON dish.id = setmeal_dish.dish_id
-            WHERE setmeal_id = 43
+            WHERE setmeal_id = #{setmealId}
             """)
-    List<Dish> findBySetmealId(Long id);
+    List<Dish> findBySetmealId(Long setmealId);
+
+    /**
+     * 根据 categoryId 查询 DishVO List
+     * @param categoryId
+     * @return
+     */
+    List<DishVO> getDishVOByCategoryId(Long categoryId);
 }

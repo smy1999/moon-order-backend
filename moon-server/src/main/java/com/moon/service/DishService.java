@@ -54,5 +54,12 @@ public interface DishService {
      * @param categoryId
      * @return
      */
-    List<Dish> findByCategoryId(Long categoryId);
+    List<Dish> findDishByCategoryId(Long categoryId);
+
+    /**
+     *
+     * @param categoryId
+     * @return
+     */
+    List<DishVO> findDishVOByCategoryId(Long categoryId);
 }

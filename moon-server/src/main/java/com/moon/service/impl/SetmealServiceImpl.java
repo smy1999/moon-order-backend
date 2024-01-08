@@ -16,6 +16,7 @@ import com.moon.mapper.SetmealDishMapper;
 import com.moon.mapper.SetmealMapper;
 import com.moon.result.PageResult;
 import com.moon.service.SetmealService;
+import com.moon.vo.DishItemVO;
 import com.moon.vo.SetmealVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,5 +124,16 @@ public class SetmealServiceImpl implements SetmealService {
                 .status(status)
                 .build();
         setmealMapper.update(setmeal);
+    }
+
+    @Override
+    public List<Setmeal> findList(Long categoryId) {
+        return setmealMapper.findByCategoryId(categoryId);
+
+    }
+
+    @Override
+    public List<DishItemVO> findDishItems(Long setmealId) {
+        return setmealDishMapper.findBySetmealId(setmealId);
     }
 }

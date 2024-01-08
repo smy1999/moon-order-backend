@@ -1,6 +1,7 @@
 package com.moon.mapper;
 
 import com.moon.entity.SetmealDish;
+import com.moon.vo.DishItemVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -42,4 +43,11 @@ public interface SetmealDishMapper {
      * @return
      */
     List<Integer> getSetmealIdsByDishIds(List<Long> dishIds);
+
+    /**
+     * 根据setmealId查询
+     * @param setmealId
+     * @return
+     */
+    List<DishItemVO> findBySetmealId(Long setmealId);
 }

@@ -15,17 +15,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
-@RestController
+@RestController("adminDishController")
 @RequestMapping("/admin/dish")
 public class DishController {
 
     @Autowired
     private DishService dishService;
 
+    /**
+     * 根据分类查找
+     * @param categoryId
+     * @return
+     */
     @GetMapping("/list")
     public Result<List<Dish>> findByCategoryId(@RequestParam Long categoryId) {
         log.info("根据分类id查找 {}", categoryId);
-        List<Dish> data = dishService.findByCategoryId(categoryId);
+        List<Dish> data = dishService.findDishByCategoryId(categoryId);
         return Result.success(data);
     }
 

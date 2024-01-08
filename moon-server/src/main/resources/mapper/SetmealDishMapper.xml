@@ -30,5 +30,11 @@
             #{dishId}
         </foreach>
     </select>
+    <select id="findBySetmealId" resultType="com.moon.vo.DishItemVO">
+        SELECT d.name, d.image, d.description, s.copies
+        FROM setmeal_dish s
+        LEFT JOIN dish d ON s.dish_id = d.id
+        WHERE s.setmeal_id = #{setmealId}
+    </select>
 
 </mapper>
