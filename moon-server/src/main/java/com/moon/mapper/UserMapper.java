@@ -3,6 +3,7 @@ package com.moon.mapper;
 
 import com.moon.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -22,4 +23,12 @@ public interface UserMapper {
      * @param user
      */
     void add(User user);
+
+    /**
+     * 根据id查找
+     * @param id
+     * @return
+     */
+    @Select("SELECT * FROM user WHERE id = #{id}")
+    User findById(Long id);
 }
