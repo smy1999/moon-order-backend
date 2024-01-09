@@ -1,6 +1,8 @@
 package com.moon.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.moon.constant.MessageConstant;
 import com.moon.context.BaseContext;
 import com.moon.dto.OrdersPaymentDTO;
@@ -14,10 +16,12 @@ import com.moon.mapper.OrderMapper;
 import com.moon.mapper.OrderDetailMapper;
 import com.moon.mapper.ShoppingCartMapper;
 import com.moon.mapper.UserMapper;
+import com.moon.result.PageResult;
 import com.moon.service.OrderService;
 import com.moon.utils.WeChatPayUtil;
 import com.moon.vo.OrderPaymentVO;
 import com.moon.vo.OrderSubmitVO;
+import com.moon.vo.OrderVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +31,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -64,6 +69,93 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+    }
+
+    @Override
+    public PageResult queryOrdersPage(Integer page, Integer pageSize, Integer status) {
+        PageHelper.startPage(page, pageSize);
+        Orders orderCondition = Orders.builder()
+                .userId(BaseContext.getCurrentId())
+                .status(status)
+                .build();
+        List<Orders> orders = orderMapper.findByOrder(orderCondition);
+        if (orders == null || orders.isEmpty()) {
+            return new PageResult(0, null);
+        }
+        List<OrderVO> orderVOs = new ArrayList<>();
+        orders.forEach(order -> {
+            OrderVO orderVO = new OrderVO();
+            BeanUtils.copyProperties(order, orderVO);
+            List<OrderDetail> details = orderDetailMapper.findByOrderId(order.getId());
+            orderVO.setOrderDetailList(details);
+            orderVOs.add(orderVO);
+        });
+        PageInfo pageInfo = new PageInfo(orderVOs);
+
+        return new PageResult(pageInfo.getTotal(), pageInfo.getList());
+    }
+
+    @Override
+    public OrderVO findById(Long orderId) {
+
+        Orders order = orderMapper.findById(orderId);
+        List<OrderDetail> details = orderDetailMapper.findByOrderId(orderId);
+
+        OrderVO vo = new OrderVO();
+        BeanUtils.copyProperties(order, vo);
+        vo.setOrderDetailList(details);
+
+        return vo;
+    }
+
+    @Override
+    public void cancel(Long id) {
+        Orders orderDB = orderMapper.findById(id);
+        if (orderDB == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        // 如果是这些状态,则不能直接退款
+        Integer status = orderDB.getStatus();
+        if (status > 2) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        // 待接单取消后,支付状态改为退款
+        Orders order = new Orders();
+        if (status.equals(Orders.TO_BE_CONFIRMED)) {
+            order.setPayStatus(Orders.REFUND);
+        }
+
+        order.setId(orderDB.getId());
+        order.setCancelReason("用户取消");
+        order.setStatus(Orders.CANCELLED);
+        order.setCancelTime(LocalDateTime.now());
+        orderMapper.update(order);
+    }
+
+    @Override
+    public void repetition(Long id) {
+        Long userId = BaseContext.getCurrentId();
+        List<OrderDetail> details = orderDetailMapper.findByOrderId(id);
+//        List<ShoppingCart> carts = new ArrayList<>();
+//        details.forEach(detail -> {
+//            ShoppingCart cart = new ShoppingCart();
+//            BeanUtils.copyProperties(detail, cart, "id");
+//            cart.setCreateTime(LocalDateTime.now());
+//            cart.setUserId(userId);
+//            carts.add(cart);
+//        });
+
+        List<ShoppingCart> carts = details.stream().map(detail -> {
+            ShoppingCart cart = new ShoppingCart();
+            BeanUtils.copyProperties(detail, cart, "id");
+            cart.setUserId(userId);
+            cart.setCreateTime(LocalDateTime.now());
+            return cart;
+        }).collect(Collectors.toList());
+
+        shoppingCartMapper.addBatch(carts);
+
     }
 
 

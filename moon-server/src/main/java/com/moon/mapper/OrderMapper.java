@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 @Mapper
 public interface OrderMapper {
 
@@ -40,5 +42,20 @@ public interface OrderMapper {
      * @param orders
      */
     void update(Orders orders);
+
+    /**
+     * 根据条件查询
+     * @param order
+     * @return
+     */
+    List<Orders> findByOrder(Orders order);
+
+    /**
+     * 根据id查询
+     * @param orderId
+     * @return
+     */
+    @Select("SELECT * FROM orders WHERE id = #{orderId}")
+    Orders findById(Long orderId);
 }
 
