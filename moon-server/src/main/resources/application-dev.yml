@@ -19,3 +19,10 @@ moon:
   wechat:
     appid: wxc18fc1e91378fef9
     secret: c469f64c80dd4c0242adf81e4cdb9ba0
+    mchid:
+    mch-serial-no:
+    private-key-file-path:
+    api-v3-key:
+    we-chat-pay-cert-file-path:
+    notify-url:
+    refund-notify-url:

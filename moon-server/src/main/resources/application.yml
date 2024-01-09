@@ -43,7 +43,6 @@ moon:
     user-secret-key: moonorderuser
     user-ttl: 720000000
     user-token-name: authentication
-
   alioss:
     endpoint: ${moon.alioss.endpoint}
     access-key-id: ${moon.alioss.access-key-id}
@@ -52,3 +51,10 @@ moon:
   wechat:
     appid: ${moon.wechat.appid}
     secret: ${moon.wechat.secret}
+    mchid: ${moon.wechat.mchid}
+    mch-serial-no: ${moon.wechat.mch-serial-no}
+    private-key-file-path: ${moon.wechat.private-key-file-path}
+    api-v3-key: ${moon.wechat.api-v3-key}
+    we-chat-pay-cert-file-path: ${moon.wechat.private-key-file-path}
+    notify-url: ${moon.wechat.notify-url}
+    refund-notify-url: ${moon.wechat.refund-notify-url}
