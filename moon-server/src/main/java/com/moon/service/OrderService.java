@@ -1,9 +1,9 @@
 package com.moon.service;
 
-import com.moon.dto.OrdersPaymentDTO;
-import com.moon.dto.OrdersSubmitDTO;
+import com.moon.dto.*;
 import com.moon.result.PageResult;
 import com.moon.vo.OrderPaymentVO;
+import com.moon.vo.OrderStatisticsVO;
 import com.moon.vo.OrderSubmitVO;
 import com.moon.vo.OrderVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,4 +60,48 @@ public interface OrderService {
      * @param id
      */
     void repetition(Long id);
+
+    /**
+     * 服务端根据条件查询
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    PageResult search(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    /**
+     * 统计各类型订单数
+     * @return
+     */
+    OrderStatisticsVO statistics();
+
+
+    /**
+     * 接单
+     * @param ordersConfirmDTO
+     */
+    void confirm(OrdersConfirmDTO ordersConfirmDTO);
+
+    /**
+     * 拒单
+     * @param ordersRejectionDTO
+     */
+    void rejection(OrdersRejectionDTO ordersRejectionDTO);
+
+    /**
+     * 商家取消订单
+     * @param ordersCancelDTO
+     */
+    void cancelByAdmin(OrdersCancelDTO ordersCancelDTO);
+
+    /**
+     * 派送订单
+     * @param id
+     */
+    void delivery(Long id);
+
+    /**
+     * 完成订单
+     * @param id
+     */
+    void complete(Long id);
 }

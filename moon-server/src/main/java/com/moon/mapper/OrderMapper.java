@@ -1,5 +1,6 @@
 package com.moon.mapper;
 
+import com.moon.dto.OrdersPageQueryDTO;
 import com.moon.entity.Orders;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -45,10 +46,10 @@ public interface OrderMapper {
 
     /**
      * 根据条件查询
-     * @param order
+     * @param ordersPageQueryDTO
      * @return
      */
-    List<Orders> findByOrder(Orders order);
+    List<Orders> findByOrder(OrdersPageQueryDTO ordersPageQueryDTO);
 
     /**
      * 根据id查询
@@ -57,5 +58,13 @@ public interface OrderMapper {
      */
     @Select("SELECT * FROM orders WHERE id = #{orderId}")
     Orders findById(Long orderId);
+
+    /**
+     * 计算某类型的订单数
+     * @param status
+     * @return
+     */
+    @Select("SELECT COUNT(0) FROM orders WHERE status = #{status}")
+    Integer countByStatus(Integer status);
 }
 

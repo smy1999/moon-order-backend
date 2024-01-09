@@ -5,8 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.moon.constant.MessageConstant;
 import com.moon.context.BaseContext;
-import com.moon.dto.OrdersPaymentDTO;
-import com.moon.dto.OrdersSubmitDTO;
+import com.moon.dto.*;
 import com.moon.entity.*;
 import com.moon.exception.AddressBookBusinessException;
 import com.moon.exception.OrderBusinessException;
@@ -20,8 +19,10 @@ import com.moon.result.PageResult;
 import com.moon.service.OrderService;
 import com.moon.utils.WeChatPayUtil;
 import com.moon.vo.OrderPaymentVO;
+import com.moon.vo.OrderStatisticsVO;
 import com.moon.vo.OrderSubmitVO;
 import com.moon.vo.OrderVO;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -74,11 +75,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public PageResult queryOrdersPage(Integer page, Integer pageSize, Integer status) {
         PageHelper.startPage(page, pageSize);
-        Orders orderCondition = Orders.builder()
-                .userId(BaseContext.getCurrentId())
-                .status(status)
-                .build();
-        List<Orders> orders = orderMapper.findByOrder(orderCondition);
+        OrdersPageQueryDTO ordersPageQueryDTO = new OrdersPageQueryDTO();
+        ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
+        ordersPageQueryDTO.setStatus(status);
+        List<Orders> orders = orderMapper.findByOrder(ordersPageQueryDTO);
         if (orders == null || orders.isEmpty()) {
             return new PageResult(0, null);
         }
@@ -156,6 +156,109 @@ public class OrderServiceImpl implements OrderService {
 
         shoppingCartMapper.addBatch(carts);
 
+    }
+
+    @Override
+    public PageResult search(OrdersPageQueryDTO ordersPageQueryDTO) {
+        PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
+
+        Orders orderCondition = new Orders();
+        BeanUtils.copyProperties(ordersPageQueryDTO, orderCondition);
+        List<Orders> orders = orderMapper.findByOrder(ordersPageQueryDTO);
+
+        PageInfo<Orders> pageInfo = new PageInfo<>(orders);
+
+        return new PageResult(pageInfo.getTotal(), pageInfo.getList());
+    }
+
+    @Override
+    public OrderStatisticsVO statistics() {
+        Integer confirmed = orderMapper.countByStatus(Orders.CONFIRMED);
+        Integer deliveryInProgress = orderMapper.countByStatus(Orders.DELIVERY_IN_PROGRESS);
+        Integer toBeConfirmed = orderMapper.countByStatus(Orders.TO_BE_CONFIRMED);
+        OrderStatisticsVO vo = new OrderStatisticsVO();
+        vo.setConfirmed(confirmed);
+        vo.setToBeConfirmed(toBeConfirmed);
+        vo.setDeliveryInProgress(deliveryInProgress);
+        return vo;
+    }
+
+    @Override
+    public void confirm(OrdersConfirmDTO ordersConfirmDTO) {
+        Orders order = Orders.builder()
+                .id(ordersConfirmDTO.getId())
+                .status(Orders.CONFIRMED)
+                .build();
+        orderMapper.update(order);
+    }
+
+    @Override
+    public void rejection(OrdersRejectionDTO ordersRejectionDTO) {
+        Orders orderDB = orderMapper.findById(ordersRejectionDTO.getId());
+        if (orderDB == null || !orderDB.getStatus().equals(Orders.TO_BE_CONFIRMED)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Orders order = Orders.builder()
+                .id(ordersRejectionDTO.getId())
+                .status(Orders.CANCELLED)
+                .rejectionReason(ordersRejectionDTO.getRejectionReason())
+                .cancelTime(LocalDateTime.now())
+                .build();
+
+        if (orderDB.getPayStatus().equals(Orders.PAID)) {
+            order.setPayStatus(Orders.REFUND);
+        }
+
+        orderMapper.update(order);
+    }
+
+    @Override
+    public void cancelByAdmin(OrdersCancelDTO ordersCancelDTO) {
+        Orders orderDB = orderMapper.findById(ordersCancelDTO.getId());
+//        if (orderDB == null ||
+//                orderDB.getStatus().equals(Orders.TO_BE_CONFIRMED) ||
+//                orderDB.getStatus().equals(Orders.CANCELLED)) {
+//            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+//        }
+
+        Orders order = Orders.builder()
+                .id(ordersCancelDTO.getId())
+                .cancelReason(ordersCancelDTO.getCancelReason())
+                .cancelTime(LocalDateTime.now())
+                .status(Orders.CANCELLED)
+                .build();
+        if (orderDB.getPayStatus().equals(Orders.PAID)) {
+            order.setPayStatus(Orders.REFUND);
+        }
+        orderMapper.update(order);
+    }
+
+    @Override
+    public void delivery(Long id) {
+        Orders orderDB = orderMapper.findById(id);
+        if (orderDB == null || !orderDB.getStatus().equals(Orders.CONFIRMED)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Orders order = Orders.builder()
+                .id(id)
+                .status(Orders.DELIVERY_IN_PROGRESS)
+                .build();
+        orderMapper.update(order);
+    }
+
+    @Override
+    public void complete(Long id) {
+        Orders orderDB = orderMapper.findById(id);
+        if (orderDB == null || !orderDB.getStatus().equals(Orders.DELIVERY_IN_PROGRESS)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Orders order = Orders.builder()
+                .id(id)
+                .status(Orders.COMPLETED)
+                .deliveryTime(LocalDateTime.now())
+                .build();
+        orderMapper.update(order);
     }
 
 
