@@ -1,9 +1,6 @@
 package com.moon.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,6 +10,7 @@ import java.time.LocalDateTime;
  * 订单
  */
 @Data
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
