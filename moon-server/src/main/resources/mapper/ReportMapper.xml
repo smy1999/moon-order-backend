@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moon.mapper.ReportMapper">
+
+
+    <select id="sumTurnoverByMap" resultType="java.lang.Double">
+        SELECT SUM(amount)
+        FROM orders
+        <where>
+            <if test="begin != null">
+                AND order_time &gt;= #{begin}
+            </if>
+            <if test="end != null">
+                AND order_time &lt;= #{end}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="sumUserByMap" resultType="java.lang.Integer">
+        SELECT COUNT(id)
+        FROM user
+        <where>
+            <if test="begin != null">
+                AND create_time &gt;= #{begin}
+            </if>
+            <if test="end != null">
+                AND create_time &lt;= #{end}
+            </if>
+        </where>
+    </select>
+    <select id="sumOrderByMap" resultType="java.lang.Integer">
+        SELECT COUNT(id)
+        FROM orders
+        <where>
+            <if test="begin != null">
+                AND order_time &gt;= #{begin}
+            </if>
+            <if test="end != null">
+                AND order_time &lt;= #{end}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+
+
+    </select>
+    <select id="findTopSales" resultType="com.moon.dto.GoodsSalesDTO">
+        SELECT name, SUM(d.number) number
+        FROM order_detail d
+        LEFT JOIN orders o ON d.order_id = o.id
+        <where>
+            AND o.status = 5
+            <if test="begin != null">
+                AND order_time &gt;= #{begin}
+            </if>
+            <if test="end != null">
+                AND order_time &lt;= #{end}
+            </if>
+        </where>
+        GROUP BY name
+        ORDER BY number DESC
+        LIMIT 0, 10
+    </select>
+</mapper>
