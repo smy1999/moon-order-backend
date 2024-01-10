@@ -90,4 +90,12 @@ public interface DishMapper {
      * @return
      */
     List<DishVO> getDishVOByCategoryId(Long categoryId);
+
+    /**
+     * 根据状态计数菜品
+     * @param status
+     * @return
+     */
+    @Select("SELECT COUNT(1) FROM dish WHERE status = #{status}")
+    Integer sumByStatus(Integer status);
 }

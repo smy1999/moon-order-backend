@@ -113,6 +113,11 @@ public class ReportServiceImpl implements ReportService {
             validOrderCount += validOrder;
         }
 
+        Double orderCompletionRate = 0.0;
+        if (totalOrderCount != 0) {
+            orderCompletionRate = validOrderCount.doubleValue() / totalOrderCount;
+        }
+
         return OrderReportVO
                 .builder()
                 .dateList(StringUtils.join(dateList, ","))
@@ -120,7 +125,7 @@ public class ReportServiceImpl implements ReportService {
                 .validOrderCountList(StringUtils.join(validOrderList, ","))
                 .validOrderCount(validOrderCount)
                 .totalOrderCount(totalOrderCount)
-                .orderCompletionRate(validOrderCount / (0.0 + totalOrderCount))
+                .orderCompletionRate(orderCompletionRate)
                 .build();
     }
 

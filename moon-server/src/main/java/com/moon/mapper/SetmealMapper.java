@@ -73,4 +73,12 @@ public interface SetmealMapper {
             SELECT * FROM setmeal WHERE category_id = #{categoryId} AND status = 1
             """)
     List<Setmeal> findByCategoryId(Long categoryId);
+
+    /**
+     * 根据状态计数套餐
+     * @param status
+     * @return
+     */
+    @Select("SELECT COUNT(1) FROM setmeal WHERE status = #{status}")
+    Integer sumByStatus(Integer status);
 }
