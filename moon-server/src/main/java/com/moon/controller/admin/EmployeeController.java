@@ -4,6 +4,7 @@ import com.moon.constant.JwtClaimsConstant;
 import com.moon.dto.EmployeeDTO;
 import com.moon.dto.EmployeeLoginDTO;
 import com.moon.dto.EmployeePageQueryDTO;
+import com.moon.dto.PasswordEditDTO;
 import com.moon.entity.Employee;
 import com.moon.properties.JwtProperties;
 import com.moon.result.PageResult;
@@ -30,6 +31,18 @@ public class EmployeeController {
     private EmployeeService employeeService;
     @Autowired
     private JwtProperties jwtProperties;
+
+    /**
+     * 修改密码
+     * @param passwordEditDTO
+     * @return
+     */
+    @PutMapping("/editPassword")
+    public Result<String> editPassword(@RequestBody PasswordEditDTO passwordEditDTO) {
+        log.info("修改密码 {}", passwordEditDTO);
+        employeeService.editPassword(passwordEditDTO);
+        return Result.success();
+    }
 
 
     /**

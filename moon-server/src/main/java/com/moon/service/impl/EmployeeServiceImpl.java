@@ -9,9 +9,11 @@ import com.moon.context.BaseContext;
 import com.moon.dto.EmployeeDTO;
 import com.moon.dto.EmployeeLoginDTO;
 import com.moon.dto.EmployeePageQueryDTO;
+import com.moon.dto.PasswordEditDTO;
 import com.moon.entity.Employee;
 import com.moon.exception.AccountLockedException;
 import com.moon.exception.AccountNotFoundException;
+import com.moon.exception.PasswordEditFailedException;
 import com.moon.exception.PasswordErrorException;
 import com.moon.mapper.EmployeeMapper;
 import com.moon.result.PageResult;
@@ -123,5 +125,21 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.updateEmployee(employee);
     }
 
+    @Override
+    public void editPassword(PasswordEditDTO passwordEditDTO) {
+        Long EmpId = BaseContext.getCurrentId();
+        Employee employeeDB = employeeMapper.getById(EmpId);
+        if (employeeDB == null) {
+            throw new PasswordEditFailedException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
+        if (!employeeDB.getPassword().equals(DigestUtils.md5DigestAsHex(passwordEditDTO.getOldPassword().getBytes()))) {
+            throw new PasswordEditFailedException(MessageConstant.PASSWORD_ERROR);
+        }
+        Employee employee = Employee.builder()
+                .id(EmpId)
+                .password(DigestUtils.md5DigestAsHex(passwordEditDTO.getNewPassword().getBytes()))
+                .build();
+        employeeMapper.updateEmployee(employee);
+    }
 
 }

@@ -3,6 +3,7 @@ package com.moon.service;
 import com.moon.dto.EmployeeDTO;
 import com.moon.dto.EmployeeLoginDTO;
 import com.moon.dto.EmployeePageQueryDTO;
+import com.moon.dto.PasswordEditDTO;
 import com.moon.entity.Employee;
 import com.moon.result.PageResult;
 
@@ -48,4 +49,10 @@ public interface EmployeeService {
      * @param employeeDTO
      */
     void editEmployee(EmployeeDTO employeeDTO);
+
+    /**
+     * 修改密码
+     * @param passwordEditDTO
+     */
+    void editPassword(PasswordEditDTO passwordEditDTO);
 }

@@ -23,6 +23,7 @@ import com.moon.vo.OrderPaymentVO;
 import com.moon.vo.OrderStatisticsVO;
 import com.moon.vo.OrderSubmitVO;
 import com.moon.vo.OrderVO;
+import com.moon.websocket.WebSocketServer;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,6 +52,12 @@ public class OrderServiceImpl implements OrderService {
     private WeChatPayUtil weChatPayUtil;
     @Autowired
     private BaiduUtil baiduUtil;
+    @Autowired
+    private WebSocketServer webSocketServer;
+
+    private static final Integer PENDING_CONFIRMED = 1;
+    private static final Integer REMINDER = 2;
+
 
 
     /**
@@ -71,6 +77,8 @@ public class OrderServiceImpl implements OrderService {
                 .payStatus(Orders.PAID)
                 .checkoutTime(LocalDateTime.now())
                 .build();
+
+        sendMessage(PENDING_CONFIRMED, ordersDB.getId(), "订单号" + outTradeNo);
 
         orderMapper.update(orders);
     }
@@ -264,6 +272,16 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(order);
     }
 
+    @Override
+    public void reminder(Long id) {
+        Orders ordersDB = orderMapper.findById(id);
+        if (ordersDB == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        sendMessage(REMINDER, id, "用户催单");
+    }
+
 
     /**
      * 订单支付
@@ -296,6 +314,24 @@ public class OrderServiceImpl implements OrderService {
         paySuccess(ordersPaymentDTO.getOrderNumber());
         OrderPaymentVO vo = new OrderPaymentVO();
         return vo;
+    }
+
+    private void sendMessage(Integer type, Long orderId, String content) {
+
+        Map<String, Object> map = new HashMap();
+        map.put("type", type);
+        map.put("orderId", orderId);
+        map.put("content", content);
+
+        String json = JSONObject.toJSONString(map);
+        webSocketServer.sendToAllClient(json);
+
+//        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("type", type);
+//        jsonObject.put("orderId", orderId);
+//        jsonObject.put("content", content);
+//
+//        webSocketServer.sendToAllClient(jsonObject.toString());
     }
 
 
