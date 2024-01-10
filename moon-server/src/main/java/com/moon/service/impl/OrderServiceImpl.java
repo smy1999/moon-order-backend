@@ -17,6 +17,7 @@ import com.moon.mapper.ShoppingCartMapper;
 import com.moon.mapper.UserMapper;
 import com.moon.result.PageResult;
 import com.moon.service.OrderService;
+import com.moon.utils.BaiduUtil;
 import com.moon.utils.WeChatPayUtil;
 import com.moon.vo.OrderPaymentVO;
 import com.moon.vo.OrderStatisticsVO;
@@ -49,6 +50,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderDetailMapper orderDetailMapper;
     @Autowired
     private WeChatPayUtil weChatPayUtil;
+    @Autowired
+    private BaiduUtil baiduUtil;
 
 
     /**
@@ -304,6 +307,10 @@ public class OrderServiceImpl implements OrderService {
         AddressBook address = addressBookMapper.getById(ordersSubmitDTO.getAddressBookId());
         if (address == null) {
             throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
+        }
+        String checkAdd = address.getProvinceName() + address.getCityName() + address.getDistrictName() + address.getDetail();
+        if (!baiduUtil.validate(checkAdd)) {
+            throw new AddressBookBusinessException(MessageConstant.DISTANCE_TOO_FAR);
         }
 
         Long userId = BaseContext.getCurrentId();
