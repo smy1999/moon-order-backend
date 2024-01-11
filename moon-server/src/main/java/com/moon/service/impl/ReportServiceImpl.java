@@ -4,17 +4,23 @@ import com.moon.dto.GoodsSalesDTO;
 import com.moon.entity.Orders;
 import com.moon.mapper.ReportMapper;
 import com.moon.service.ReportService;
-import com.moon.vo.OrderReportVO;
-import com.moon.vo.SalesTop10ReportVO;
-import com.moon.vo.TurnoverReportVO;
-import com.moon.vo.UserReportVO;
+import com.moon.service.WorkspaceService;
+import com.moon.vo.*;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -24,6 +30,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private ReportMapper reportMapper;
+
+    @Autowired
+    private WorkspaceService workspaceService;
 
     @Override
     public TurnoverReportVO turnover(LocalDate begin, LocalDate end) {
@@ -147,6 +156,56 @@ public class ReportServiceImpl implements ReportService {
                 .numberList(StringUtils.join(numbers, ","))
                 .nameList(StringUtils.join(names, ","))
                 .build();
+    }
+
+    @Override
+    public void export(HttpServletResponse resp) {
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream("template/运营数据报表模板.xlsx");
+        try {
+
+            XSSFWorkbook excel = new XSSFWorkbook(in);
+            XSSFSheet sheet = excel.getSheetAt(0);
+
+            // 处理总数据
+            LocalDate end = LocalDate.now().minusDays(1);
+            LocalDate begin = LocalDate.now().minusDays(30);
+
+            String dateInfo = begin.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " to " + end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            sheet.getRow(2).getCell(2).setCellValue(dateInfo);
+
+            BusinessDataVO total = workspaceService.business(begin, end);
+            XSSFRow row = sheet.getRow(3);
+            row.getCell(2).setCellValue(total.getTurnover());
+            row.getCell(4).setCellValue(total.getOrderCompletionRate());
+            row.getCell(6).setCellValue(total.getNewUsers());
+            row = sheet.getRow(4);
+            row.getCell(2).setCellValue(total.getValidOrderCount());
+            row.getCell(4).setCellValue(total.getUnitPrice());
+
+            // 处理每天数据
+            for (int i = 0; i < 30; i++) {
+                LocalDate date = begin.plusDays(i);
+                BusinessDataVO business = workspaceService.business(date, date);
+
+                row = sheet.getRow(i + 7);
+                row.getCell(1).setCellValue(date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                row.getCell(2).setCellValue(business.getTurnover());
+                row.getCell(3).setCellValue(business.getValidOrderCount());
+                row.getCell(4).setCellValue(business.getOrderCompletionRate());
+                row.getCell(5).setCellValue(business.getUnitPrice());
+                row.getCell(6).setCellValue(business.getNewUsers());
+            }
+
+            ServletOutputStream out = resp.getOutputStream();
+            excel.write(out);
+
+            out.close();
+            excel.close();
+            in.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

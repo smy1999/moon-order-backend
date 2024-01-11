@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/admin/workspace")
 @Slf4j
@@ -26,7 +28,6 @@ public class WorkspaceController {
 
     /**
      * 查询套餐管理数据
-     * @return
      */
     @GetMapping("/overviewSetmeals")
     public Result<SetmealOverViewVO> setmeal() {
@@ -38,7 +39,6 @@ public class WorkspaceController {
 
     /**
      * 查询菜品管理数据
-     * @return
      */
     @GetMapping("/overviewDishes")
     public Result<DishOverViewVO> dish() {
@@ -50,7 +50,6 @@ public class WorkspaceController {
 
     /**
      * 查询订单管理数据
-     * @return
      */
     @GetMapping("/overviewOrders")
     public Result<OrderOverViewVO> order() {
@@ -61,12 +60,12 @@ public class WorkspaceController {
 
     /**
      * 查询今日运营数据
-     * @return
      */
     @GetMapping("/businessData")
     public Result<BusinessDataVO> businessData() {
         log.info("查询今日运营数据");
-        BusinessDataVO vo =  workspaceService.business();
+        LocalDate today = LocalDate.now();
+        BusinessDataVO vo =  workspaceService.business(today, today);
         return Result.success(vo);
     }
 }

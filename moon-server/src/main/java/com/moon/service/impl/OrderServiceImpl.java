@@ -24,13 +24,11 @@ import com.moon.vo.OrderStatisticsVO;
 import com.moon.vo.OrderSubmitVO;
 import com.moon.vo.OrderVO;
 import com.moon.websocket.WebSocketServer;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -62,8 +60,6 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 支付成功，修改订单状态
-     *
-     * @param outTradeNo
      */
     public void paySuccess(String outTradeNo) {
 
@@ -285,9 +281,6 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 订单支付
-     *
-     * @param ordersPaymentDTO
-     * @return
      */
     public OrderPaymentVO payment(OrdersPaymentDTO ordersPaymentDTO) throws Exception {
         // 当前登录用户id

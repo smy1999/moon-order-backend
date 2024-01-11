@@ -33,10 +33,9 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
 
     @Override
-    public BusinessDataVO business() {
-        LocalDate today = LocalDate.now();
-        LocalDateTime begin = LocalDateTime.of(today, LocalTime.MIN);
-        LocalDateTime end = LocalDateTime.of(today, LocalTime.MAX);
+    public BusinessDataVO business(LocalDate beginDate, LocalDate endDate) {
+        LocalDateTime begin = LocalDateTime.of(beginDate, LocalTime.MIN);
+        LocalDateTime end = LocalDateTime.of(endDate, LocalTime.MAX);
 
         Map<String, Object> param = new HashMap<>();
         param.put("begin", begin);
@@ -48,6 +47,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         param.put("status", Orders.COMPLETED);
         Integer validOrder = reportMapper.sumOrderByMap(param);
         Double turnover = reportMapper.sumTurnoverByMap(param);
+        turnover = turnover == null ? 0.0 : turnover;
 
         Double unitPrice = 0.0;
         if (totalOrder != 0) {

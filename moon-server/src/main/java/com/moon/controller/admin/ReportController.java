@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 
 @Slf4j
@@ -24,10 +25,17 @@ public class ReportController {
     private ReportService reportService;
 
     /**
+     * 导出Excel报表
+     */
+    @GetMapping("/export")
+    public String export(HttpServletResponse resp) {
+        log.info("导出Excel报表");
+        reportService.export(resp);
+        return "OK";
+    }
+
+    /**
      * 销量top10统计
-     * @param begin
-     * @param end
-     * @return
      */
     @GetMapping("/top10")
     public Result<SalesTop10ReportVO> sale(
@@ -42,9 +50,6 @@ public class ReportController {
 
     /**
      * 订单统计
-     * @param begin
-     * @param end
-     * @return
      */
     @GetMapping("/ordersStatistics")
     public Result<OrderReportVO> order(
@@ -59,9 +64,6 @@ public class ReportController {
 
     /**
      * 用户统计
-     * @param begin
-     * @param end
-     * @return
      */
     @GetMapping("/userStatistics")
     public Result<UserReportVO> user(
@@ -76,10 +78,6 @@ public class ReportController {
 
     /**
      * 营业额统计
-     *
-     * @param begin
-     * @param end
-     * @return
      */
     @GetMapping("/turnoverStatistics")
     public Result<TurnoverReportVO> turnover(

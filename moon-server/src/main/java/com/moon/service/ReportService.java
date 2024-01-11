@@ -5,39 +5,34 @@ import com.moon.vo.SalesTop10ReportVO;
 import com.moon.vo.TurnoverReportVO;
 import com.moon.vo.UserReportVO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 
 public interface ReportService {
 
     /**
      * 营业额统计
-     * @param begin
-     * @param end
-     * @return
      */
     TurnoverReportVO turnover(LocalDate begin, LocalDate end);
 
     /**
      * 用户统计
-     * @param begin
-     * @param end
-     * @return
      */
     UserReportVO user(LocalDate begin, LocalDate end);
 
     /**
      * 订单统计
-     * @param begin
-     * @param end
-     * @return
      */
     OrderReportVO order(LocalDate begin, LocalDate end);
 
     /**
      * 销量统计
-     * @param begin
-     * @param end
-     * @return
      */
     SalesTop10ReportVO sale(LocalDate begin, LocalDate end);
+
+    /**
+     * 导出Excel报表
+     */
+    void export(HttpServletResponse resp);
+
 }
