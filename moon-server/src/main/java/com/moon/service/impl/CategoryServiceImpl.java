@@ -70,7 +70,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public synchronized void deleteById(Long id) {
 
         //查询当前分类是否关联了菜品，如果关联了就抛出业务异常
         Integer count;
