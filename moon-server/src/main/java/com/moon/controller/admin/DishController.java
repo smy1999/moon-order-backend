@@ -120,7 +120,7 @@ public class DishController {
     }
 
     /**
-     * 清楚缓存
+     * 清除缓存
      * @param pattern
      */
     private void cleanCache(String pattern) {
