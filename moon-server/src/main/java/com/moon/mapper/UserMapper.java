@@ -1,6 +1,5 @@
 package com.moon.mapper;
 
-
 import com.moon.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
