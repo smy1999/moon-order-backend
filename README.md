@@ -1,2 +1,2 @@
-# MoonOrder
-This is the MoonOrder, an awesome online ordering system.
+# Moon Order
+This is Moon Order, an awesome online ordering system.

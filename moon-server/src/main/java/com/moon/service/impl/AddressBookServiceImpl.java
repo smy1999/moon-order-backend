@@ -23,6 +23,7 @@ public class AddressBookServiceImpl implements AddressBookService {
      * @param addressBook
      * @return
      */
+    @Override
     public List<AddressBook> list(AddressBook addressBook) {
         return addressBookMapper.list(addressBook);
     }
@@ -32,6 +33,7 @@ public class AddressBookServiceImpl implements AddressBookService {
      *
      * @param addressBook
      */
+    @Override
     public void save(AddressBook addressBook) {
         addressBook.setUserId(BaseContext.getCurrentId());
         addressBook.setIsDefault(0);
